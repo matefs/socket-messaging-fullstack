@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Socket.IO Client</title>
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #36393f;
+      color: #dcddde;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 1.2rem;
+      border-radius: 5px;
+      border: 1px solid #72767d;
+      background-color: #40444b;
+      color: #dcddde;
+      margin-right: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 5px;
+      background-color: #5865f2;
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #4752c4;
+    }
+
+    #messages {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 600px;
+      padding: 10px;
+      border: 1px solid #72767d;
+      border-radius: 5px;
+      background-color: #40444b;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    #messages div {
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<script>
+    function handleClick() {
+        if (isConnected) {
+            showSuccessMessage('Message sent');
+        }
+    }
+</script>
+<body>
+  <h1>Socket.IO Client</h1>
+  <div id="successDiv"></div>
+  <div>
+    <input type="text" id="messageInput" placeholder="Enter message">
+    <button id="sendMessageButton" onclick="handleClick()">Send Message</button>
+  </div>
+
+  <div>
+    <p>Messages history: </p>
+    <div id="messages"></div>
+  </div>
+
+  <script defer>
+    const socket = io();
+
+    const successMessageDiv = document.getElementById('successMessage');
+    successDiv.style.display = 'none'; // Initially hidden
+    successDiv.style.backgroundColor = '#43b581';
+    successDiv.style.color = '#ffffff';
+    successDiv.style.padding = '10px';
+    successDiv.style.borderRadius = '5px';
+    successDiv.style.marginTop = '10px';
+    successDiv.style.marginBottom= '10px';
+    successDiv.style.fontSize = '1.1rem';
+
+    // Update success message function
+    function showSuccessMessage(message) {
+        successDiv.textContent = `${message}`;
+        successDiv.style.display = 'block';
+        setTimeout(() => {
+            successDiv.style.display = 'none';
+        }, 2000); // Hide the message after 2 seconds
+    }
+
+
+    var isConnected = false;
+    socket.on('connect', () => {
+      console.log('\nConnected to server');
+      isConnected = true;
+      showSuccessMessage('Connected to server');
+    });
+
+    socket.on('messageBroadcast', (message) => {
+      const messageDiv = document.createElement('div');
+      messageDiv.textContent = `Broadcasted message: ${message}`;
+      document.getElementById('messages').appendChild(messageDiv);
+
+    });
+
+    document.getElementById('sendMessageButton').addEventListener('click', () => {
+      const message = document.getElementById('messageInput').value;
+      socket.emit('messageBroadcast', message);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from server');
+    });
+  </script>
+</body>
+</html>
