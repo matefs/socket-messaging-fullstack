@@ -18,21 +18,14 @@ This project is a simple chat application using Socket.IO with a vanilla JavaScr
 ## Installation
 
 1.  **Clone the Repository**
+     
     
-    bash
-    
-    Copiar código
-    
-    `git clone <repository-url>
-    cd <repository-directory>` 
+   - `git clone <repository-url>`
+   - `cd <repository-directory>` 
     
 2.  **Install Dependencies**
     
     Navigate to your project directory and install the required npm packages:
-    
-    bash
-    
-    Copiar código
     
     `npm install` 
     
@@ -42,10 +35,6 @@ This project is a simple chat application using Socket.IO with a vanilla JavaScr
 1.  **Start the Server**
     
     Run the server using Node.js:
-    
-    bash
-    
-    Copiar código
     
     `node app.js` 
     
