@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Socket.IO Client</title>
+  <title>Chat Socket.IO</title>
   <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
   <style>
     body {
@@ -12,18 +12,44 @@
       padding: 0;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
       height: 100vh;
     }
 
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 20px;
+    #chatContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      max-width: 600px;
+      margin: auto;
+      width: 100%;
+      height: 80vh;
+      border: 1px solid #72767d;
+      border-radius: 10px;
+      background-color: #40444b;
+      overflow: hidden;
     }
 
-    input[type="text"] {
+    #messages {
       padding: 10px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    #messages div {
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    #inputContainer {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #72767d;
+      background-color: #36393f;
+    }
+
+    #messageInput {
+      padding: 10px;
+      flex-grow: 1;
       font-size: 1.2rem;
       border-radius: 5px;
       border: 1px solid #72767d;
@@ -32,7 +58,7 @@
       margin-right: 10px;
     }
 
-    button {
+    #sendMessageButton {
       padding: 10px 20px;
       font-size: 1.2rem;
       border: none;
@@ -42,92 +68,70 @@
       cursor: pointer;
     }
 
-    button:hover {
+    #sendMessageButton:hover {
       background-color: #4752c4;
     }
 
-    #messages {
-      margin-top: 20px;
-      width: 100%;
-      max-width: 600px;
+    #successDiv {
+      display: none;
+      background-color: #43b581;
+      color: #ffffff;
       padding: 10px;
-      border: 1px solid #72767d;
       border-radius: 5px;
-      background-color: #40444b;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    #messages div {
-      margin-bottom: 10px;
       font-size: 1.1rem;
+      text-align: center;
+      margin: 10px;
     }
   </style>
 </head>
-<script>
-    function handleClick() {
-        if (isConnected) {
-            showSuccessMessage('Message sent');
-        }
-    }
-</script>
 <body>
-  <h1>Socket.IO Client</h1>
-  <div id="successDiv"></div>
-  <div>
-    <input type="text" id="messageInput" placeholder="Enter message">
-    <button id="sendMessageButton" onclick="handleClick()">Send Message</button>
+  <div id="chatContainer">
+    <div id="messages"></div>
+    <div id="inputContainer">
+      <input type="text" id="messageInput" placeholder="Digite sua mensagem">
+      <button id="sendMessageButton" onclick="handleClick()">Enviar</button>
+    </div>
   </div>
 
-  <div>
-    <p>Messages history: </p>
-    <div id="messages"></div>
-  </div>
+  <div id="successDiv"></div>
 
   <script defer>
     const socket = io();
 
-    const successMessageDiv = document.getElementById('successMessage');
-    successDiv.style.display = 'none'; // Initially hidden
-    successDiv.style.backgroundColor = '#43b581';
-    successDiv.style.color = '#ffffff';
-    successDiv.style.padding = '10px';
-    successDiv.style.borderRadius = '5px';
-    successDiv.style.marginTop = '10px';
-    successDiv.style.marginBottom= '10px';
-    successDiv.style.fontSize = '1.1rem';
+    const successDiv = document.getElementById('successDiv');
 
-    // Update success message function
     function showSuccessMessage(message) {
-        successDiv.textContent = `${message}`;
-        successDiv.style.display = 'block';
-        setTimeout(() => {
-            successDiv.style.display = 'none';
-        }, 2000); // Hide the message after 2 seconds
+      successDiv.textContent = `${message}`;
+      successDiv.style.display = 'block';
+      setTimeout(() => {
+        successDiv.style.display = 'none';
+      }, 2000);
     }
 
+    let isConnected = false;
 
-    var isConnected = false;
     socket.on('connect', () => {
-      console.log('\nConnected to server');
       isConnected = true;
-      showSuccessMessage('Connected to server');
+      showSuccessMessage('Conectado ao servidor');
     });
 
     socket.on('messageBroadcast', (message) => {
       const messageDiv = document.createElement('div');
-      messageDiv.textContent = `Broadcasted message: ${message}`;
+      messageDiv.textContent = 'Broadcasted message: ' + message;
       document.getElementById('messages').appendChild(messageDiv);
-
+      messageDiv.scrollIntoView({ behavior: 'smooth' });
     });
 
     document.getElementById('sendMessageButton').addEventListener('click', () => {
       const message = document.getElementById('messageInput').value;
-      socket.emit('messageBroadcast', message);
+      if (message.trim()) {
+        socket.emit('messageBroadcast', message);
+        document.getElementById('messageInput').value = '';
+      }
     });
 
     socket.on('disconnect', () => {
-      console.log('Disconnected from server');
+      console.log('Desconectado do servidor');
     });
   </script>
 </body>
