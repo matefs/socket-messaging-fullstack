@@ -1,6 +1,7 @@
 # Socket.IO Chat Message Project
 
-![socket message broadcast](https://github.com/user-attachments/assets/09a6f889-df39-4b20-af1d-4afd0e73c5da)
+
+![Peek 21-08-2024 12-16](https://github.com/user-attachments/assets/8ea6326b-4b53-4a0c-9d08-23f18bbe83bc)
 
 ## Acess it online:
 - https://stackblitz.com/github/matefs/socket-messaging-fullstack
