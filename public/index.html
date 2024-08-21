@@ -112,26 +112,37 @@
 
     socket.on('connect', () => {
       isConnected = true;
-      showSuccessMessage('Conectado ao servidor');
+      showSuccessMessage('Connected to the server');
     });
 
     socket.on('messageBroadcast', (message) => {
-      const messageDiv = document.createElement('div');
-      messageDiv.textContent = 'Broadcasted message: ' + message;
-      document.getElementById('messages').appendChild(messageDiv);
-      messageDiv.scrollIntoView({ behavior: 'smooth' });
+      addNewMessageDiv(message);
     });
 
     document.getElementById('sendMessageButton').addEventListener('click', () => {
       const message = document.getElementById('messageInput').value;
       if (message.trim()) {
+
+       addNewMessageDiv(message, true);
+ 
         socket.emit('messageBroadcast', message);
         document.getElementById('messageInput').value = '';
       }
     });
 
+    function addNewMessageDiv(message, isSending=false) {
+      const messageDiv = document.createElement('div');
+      if (isSending) {
+        messageDiv.textContent =  `You: ${message} `;
+      } else {
+        messageDiv.textContent =  `Broadcasted message: ${message} `;
+      }
+      document.getElementById('messages').appendChild(messageDiv);
+      messageDiv.scrollIntoView({ behavior: 'smooth' })
+    }
+
     socket.on('disconnect', () => {
-      console.log('Desconectado do servidor');
+      console.log('Disconnected from the server');
     });
   </script>
 </body>
